@@ -1,4 +1,4 @@
 ### create unix users
 
 
-![Usage](.img/usage.png)
+![Usage](img/usage.png)
