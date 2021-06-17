@@ -1,14 +1,21 @@
 array=( "$@" ); # read command line arguments array
 
+if [[ "$EUID" -ne 0 ]] # check if script ran with as root
+then 
+	echo "USAGE: sudo bash create-unix-users.sh user1 user1pass user2 user2pass";
+	echo "Run the script with root privileges";
+  	exit 128;
+fi
+
 if [[ -z "$array" ]] # check if login/pass pairs were specified
 then
-	echo "USAGE: ./create-unix-users.sh user1 user1pass user2 user2pass (specify login/pass pairs delimited by space)";
+	echo "USAGE: sudo bash create-unix-users.sh user1 user1pass user2 user2pass (specify login/pass pairs delimited by space)";
 	exit 128;
 fi
 
 if [[ $((${#array[@]}%2)) -ne 0 ]] # check if number of arguments passed is even
 then
-	echo "USAGE: ./create-unix-users.sh user1 user1pass user2 user2pass (uneven numbers of arguments passed)";
+	echo "USAGE: sudo bash create-unix-users.sh user1 user1pass user2 user2pass (uneven numbers of arguments passed)";
 	exit 128;
 fi
 
@@ -26,8 +33,8 @@ do
 	((i++)); 
 done
 
-printf "\n%-10s \t %-10s\n" "USER" "PASSWORD"; # display the content of associative array
-printf "\n%*s\n\n" "${COLUMNS:-$(tput cols)}" "" | tr " " -;
+printf "%-10s \t %-10s\n" "USER" "PASSWORD"; # display the content of associative array
+printf "%*s\n" "${COLUMNS:-$(tput cols)}" "" | tr " " -;
 
 for username in "${!credentials[@]}"
 do
@@ -35,11 +42,11 @@ do
 	printf "%-10s \t %-10s\n" $username $password;
 done
 
-printf "\n%*s\n\n" "${COLUMNS:-$(tput cols)}" "" | tr " " -;
+printf "%*s\n" "${COLUMNS:-$(tput cols)}" "" | tr " " -;
 
 read -p "Continue? (y/n): " proceed;
 
-printf "\n%*s\n\n" "${COLUMNS:-$(tput cols)}" "" | tr " " -;
+printf "%*s\n" "${COLUMNS:-$(tput cols)}" "" | tr " " -;
 
 if [[ "${proceed,,}" != "y" ]] # ${proceed,,} converts the input to lowercase
 then
@@ -53,7 +60,7 @@ do
 	printf "%-10s \t %-10s\n" $username "CREATED";
 done
 
-printf "\n%*s\n\n" "${COLUMNS:-$(tput cols)}" "" | tr " " -;
+printf "%*s\n" "${COLUMNS:-$(tput cols)}" "" | tr " " -;
 
 for username in "${!credentials[@]}" # !credentials[@] means looping through the keys (i.e. usernames)
 do
@@ -61,7 +68,7 @@ do
 	printf "%-10s \t %-10s\n" $username "PASSWORD SET";
 done
 
-printf "%*s\n\n" "${COLUMNS:-$(tput cols)}" "" | tr " " -;
+printf "%*s\n" "${COLUMNS:-$(tput cols)}" "" | tr " " -;
 
 for username in "${!credentials[@]}" # !credentials[@] means looping through the keys (i.e. usernames)
 do
@@ -69,6 +76,6 @@ do
 	printf "%-10s \t %-10s\n" $username "HOMEFOLDER CREATED";
 done
 
-printf "\n%*s\n\n" "${COLUMNS:-$(tput cols)}" "" | tr " " -;
+printf "%*s\n" "${COLUMNS:-$(tput cols)}" "" | tr " " -;
 
 echo -e "Completed.\n";
