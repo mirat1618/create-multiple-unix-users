@@ -1,6 +1,6 @@
 array=( "$@" ); # read command line arguments array
 
-if [[ "$EUID" -ne 0 ]] # check if script ran with as root
+if [[ "$EUID" -ne 0 ]] # check if script was ran with root privileges
 then 
 	echo "USAGE: sudo bash create-unix-users.sh user1 user1pass user2 user2pass";
 	echo "Run the script with root privileges";
